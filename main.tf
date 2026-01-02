@@ -31,7 +31,7 @@ module "vpc" {
   }
 }
 // Bastion Host  -- Bouncer
-resource "aws_instance" "app_server" {
+resource "aws_instance" "bastion_host" {
   ami           = data.aws_ami.ubuntu.id
   instance_type = var.bastion_instance_type
   security_groups = [aws_security_group.bastion_sg.id]
@@ -67,7 +67,7 @@ resource "aws_security_group" "bastion_sg" {
 resource "aws_instance" "app_server" {
   ami           = data.aws_ami.ubuntu.id
   instance_type = var.app_instance_type
-  subnet_id     = module.vpc.private_subnets
+  subnet_id     = module.vpc.private_subnets[0]
   security_groups = [aws_security_group.app_sg.id]
 
   tags = {
