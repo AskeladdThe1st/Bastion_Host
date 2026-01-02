@@ -34,6 +34,7 @@ module "vpc" {
 resource "aws_instance" "app_server" {
   ami           = data.aws_ami.ubuntu.id
   instance_type = var.bastion_instance_type
+  security_groups = [aws_security_group.bastion_sg.id]
 
   tags = {
     Name = "Bastion Host"
@@ -44,6 +45,7 @@ resource "aws_security_group" "bastion_sg" {
   name        = "bastion_sg"
   description = "Security group for Bastion Host"
   vpc_id      = module.vpc.vpc_id
+  
 
   ingress {
     from_port   = 22
@@ -58,3 +60,36 @@ resource "aws_security_group" "bastion_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
+
+// ----------------- App Server -----------------
+
+
+resource "aws_instance" "app_server" {
+  ami           = data.aws_ami.ubuntu.id
+  instance_type = "t3.micro"
+  subnet_id     = module.vpc.private_subnets
+  security_groups = [aws_security_group.app_sg.id]
+
+  tags = {
+    Name = "App Server"
+  }
+}
+resource "aws_security_group" "app_sg" {
+  name        = "app_sg"
+  description = "Security group for App Server"
+  vpc_id      = module.vpc.vpc_id
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    security_groups = [aws_security_group.bastion_sg.id]
+  }
+  egress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    security_groups = [aws_security_group.bastion_sg.id]
+  }
+}
+
