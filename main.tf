@@ -24,6 +24,9 @@ module "vpc" {
   public_subnets  = var.public_subnets
 
   enable_nat_gateway = var.enable_nat_gateway
+  create_elasticache_subnet_group = false
+  single_nat_gateway = true
+  create_redshift_subnet_group = false
 
   tags = {
     Terraform = "true"
