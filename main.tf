@@ -66,7 +66,7 @@ resource "aws_security_group" "bastion_sg" {
 
 resource "aws_instance" "app_server" {
   ami           = data.aws_ami.ubuntu.id
-  instance_type = "t3.micro"
+  instance_type = var.app_instance_type
   subnet_id     = module.vpc.private_subnets
   security_groups = [aws_security_group.app_sg.id]
 
@@ -86,9 +86,9 @@ resource "aws_security_group" "app_sg" {
     security_groups = [aws_security_group.bastion_sg.id]
   }
   egress {
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
     security_groups = [aws_security_group.bastion_sg.id]
   }
 }

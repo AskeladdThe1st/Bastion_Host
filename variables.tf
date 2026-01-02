@@ -35,3 +35,9 @@ variable "bastion_instance_type" {
     type        = string
     default     = "t3.micro"
 }
+
+variable "app_instance_type" {
+    description = "The instance type for the application server."
+    type        = string
+    default     = "t3.micro"
+}
