@@ -1,7 +1,7 @@
 variable "azs" {
     description = "A list of availability zones in which to create the VPC subnets."
     type        = list(string)
-    default     = ["us-west-1a", "us-west-1b"]
+    default     = ["us-west-2a", "us-west-2b"]
 }
 variable "private_subnets" {
     description = "A list of CIDR blocks for the private subnets."
