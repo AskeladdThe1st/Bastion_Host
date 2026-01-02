@@ -38,6 +38,7 @@ resource "aws_instance" "bastion_host" {
   ami           = data.aws_ami.ubuntu.id
   instance_type = var.bastion_instance_type
   security_groups = [aws_security_group.bastion_sg.id]
+  subnet_id     = module.vpc.public_subnets[0]
 
   tags = {
     Name = "Bastion Host"
