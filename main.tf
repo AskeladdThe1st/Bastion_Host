@@ -39,6 +39,8 @@ resource "aws_instance" "bastion_host" {
   instance_type = var.bastion_instance_type
   security_groups = [aws_security_group.bastion_sg.id]
   subnet_id     = module.vpc.public_subnets[0]
+  key_name = aws_key_pair.deployer.key_name
+  associate_public_ip_address = true
 
   tags = {
     Name = "Bastion Host"
@@ -64,6 +66,10 @@ resource "aws_security_group" "bastion_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
+resource "aws_key_pair" "deployer" {
+  key_name   = "my-bastion-key"
+  public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC3u4HQed7B867RJj/2P9/fNe2knnCy2PYpE3wJ2J6h/vZqoH22tcP7hopjY1b4Cz7+VBdKRY6lojvR8zxWb9njn9JZtT8kNS+CmoMekJz1m4Qdg11Vdl0HgtyZ241HdggNHge8NIVnTaTe3mrKjsKay6nHHhocGG2Wlb3USsIHfP6SKT01OBfvR5e6UfBVi8Yw72KL8sqW94+BnN5RSA+lojKZBAXne3kk4eX0bdqviI/PopOWHeqn1CZXq3bUBeiMy2pmLwc+JLh4NUVAOD920kQSuJ81Sm22L0q0QUF21tq+tWZ4RwNgzX3wit4VOTK3bvFtkOwaaoycY7lCg+/esaCxm6vY/pLZ5RTfbGOS60j+RenHJklJf/oZxk4upUJC/oZfQQqsXlDUDGlyoH0z95aZ2fcSHbV2GSg23q2TmLAO2o0ywHk4tx2LlUMGvLeeYxFev2ASIQGPuQIureRrm+/o3ahnihB/gR6KsIdWGEm94oWKEWNISRdMflmt9R8= yusuf@Rehman"
+}
 
 // ----------------- App Server -----------------
 
@@ -73,6 +79,7 @@ resource "aws_instance" "app_server" {
   instance_type = var.app_instance_type
   subnet_id     = module.vpc.private_subnets[0]
   security_groups = [aws_security_group.app_sg.id]
+  key_name = aws_key_pair.deployer.key_name
 
   tags = {
     Name = "App Server"
@@ -84,8 +91,8 @@ resource "aws_security_group" "app_sg" {
   vpc_id      = module.vpc.vpc_id
 
   ingress {
-    from_port   = 80
-    to_port     = 80
+    from_port   = 22
+    to_port     = 22
     protocol    = "tcp"
     security_groups = [aws_security_group.bastion_sg.id]
   }

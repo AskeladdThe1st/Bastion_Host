@@ -3,3 +3,5 @@
 *.tfstate
 *.tfstate.backup
 .env
+my-bastion-key.pub
+my-bastion-key
